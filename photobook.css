@@ -1,0 +1,173 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background-color: #333;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto Condensed', sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+/* --- Header Section --- */
+header {
+    background-color: #333;
+    padding: 15px 30px;
+    color: #fff;
+    flex-shrink: 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 20px;
+    z-index: 10;
+}
+
+header h1 {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    font-variation-settings: 'wdth' 75;
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+header p {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    font-variation-settings: 'wdth' 75;
+    font-size: 1rem;
+    font-weight: 300;
+    color: #ccc;
+    letter-spacing: 0.2px;
+}
+
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        padding: 15px 20px;
+    }
+}
+
+.app-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+    gap: 10px;
+}
+
+/* --- Main Viewer (Swiper) --- */
+.main-viewer {
+    width: 100%;
+    height: 62vh;
+    flex-shrink: 0;
+    background-color: #333;
+    position: relative;
+}
+
+.main-viewer .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #333;
+}
+
+.main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* --- Invisible Navigation Hotspots --- */
+.nav-hotspot {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 20%;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.prev-zone {
+    left: 0;
+}
+
+.next-zone {
+    right: 0;
+}
+
+/* --- Thumbnail Section --- */
+.thumb-swiper {
+    width: 100%;
+    height: 16vh;
+    min-height: 100px;
+    max-height: 140px;
+    background-color: #333;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 0 40px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+}
+
+.thumb-swiper .swiper-wrapper {
+    padding: 15px 0;
+    box-sizing: border-box;
+}
+
+.thumb-swiper .swiper-slide {
+    opacity: 0.4;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.thumb-swiper .swiper-slide-thumb-active {
+    opacity: 1;
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+.thumb-swiper .swiper-slide-thumb-active .thumb-image {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border-radius: 2px;
+}
+
+.thumb-image {
+    height: calc(100% - 24px);
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.thumb-label {
+    color: #bbb;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* --- UI Elements --- */
+.page-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 6px 18px;
+    border-radius: 9999px;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 10;
+}
