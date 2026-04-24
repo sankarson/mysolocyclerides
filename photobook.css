@@ -175,7 +175,16 @@ header p {
 /* --- Landscape Optimizations --- */
 @media (orientation: landscape) and (max-height: 500px) {
     header {
-        display: none;
+        padding: 8px 20px;
+        flex-direction: row;
+        align-items: baseline;
+        gap: 12px;
+    }
+    header h1 {
+        font-size: 1.4rem;
+    }
+    header p {
+        font-size: 0.85rem;
     }
     .thumb-swiper {
         display: none;
@@ -185,11 +194,11 @@ header p {
         gap: 0;
     }
     .main-viewer {
-        height: 100dvh;
+        height: calc(100dvh - 45px);
     }
     .page-indicator {
         bottom: 10px;
-        font-size: 12px;
-        padding: 4px 12px;
+        font-size: 11px;
+        padding: 3px 10px;
     }
 }
