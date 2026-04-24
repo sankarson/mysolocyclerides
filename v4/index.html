@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title"></title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wdth,wght@75,300..800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Roboto Condensed', sans-serif;
+            transition: background-color 0.3s ease;
+        }
+
+        /* --- Fullscreen Logic --- */
+        body.is-fullscreen header,
+        body.is-fullscreen .thumb-swiper {
+            display: none;
+        }
+
+        body.is-fullscreen .main-swiper {
+            height: 100vh;
+        }
+
+        /* --- Header Section --- */
+        header {
+            background-color: #333;
+            padding: 15px 30px;
+            /* Increased side padding for a cleaner left-align */
+            color: #fff;
+            flex-shrink: 0;
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-start;
+            /* Aligns items to the left */
+            gap: 20px;
+            z-index: 10;
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Open Sans', sans-serif;
+            font-variation-settings: 'wdth' 75;
+            font-size: 2.8rem;
+            font-weight: 800;
+            /*    text-transform: uppercase;*/
+        }
+
+        header p {
+            margin: 0;
+            font-family: 'Open Sans', sans-serif;
+            font-variation-settings: 'wdth' 75;
+            font-size: 1rem;
+            font-weight: 300;
+            color: #ccc;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                /* Left align on mobile */
+                gap: 5px;
+                padding: 15px 20px;
+            }
+        }
+
+        /* --- Main Viewer --- */
+        .main-viewer {
+            width: 100%;
+            flex-grow: 1;
+            min-height: 0;
+            background-color: #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-viewer .page-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-in;
+        }
+
+        .main-viewer .page-slide.hidden {
+            display: none;
+        }
+
+        body.is-fullscreen .main-viewer .page-slide {
+            cursor: zoom-out;
+        }
+
+        .main-image {
+            max-height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        /* Page flip animation */
+        @keyframes flipRightIn {
+            0%   { clip-path: inset(0 0 0 0); }
+            100% { clip-path: inset(0 0 0 50%); }
+        }
+        @keyframes flipRightOut {
+            0%   { clip-path: inset(0 0 0 50%); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+        @keyframes flipLeftIn {
+            0%   { clip-path: inset(0 0 0 0); }
+            100% { clip-path: inset(0 50% 0 0); }
+        }
+        @keyframes flipLeftOut {
+            0%   { clip-path: inset(0 50% 0 0); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+
+        .page-slide.flip-right-in {
+            animation: flipRightIn 0.3s ease-in forwards;
+            z-index: 3;
+        }
+        .page-slide.flip-right-out {
+            animation: flipRightOut 0.3s ease-out forwards;
+            z-index: 3;
+        }
+        .page-slide.flip-left-in {
+            animation: flipLeftIn 0.3s ease-in forwards;
+            z-index: 3;
+        }
+        .page-slide.flip-left-out {
+            animation: flipLeftOut 0.3s ease-out forwards;
+            z-index: 3;
+        }
+        .page-slide.beneath {
+            z-index: 2;
+        }
+
+        /* --- Invisible Navigation Hotspots --- */
+        .nav-hotspot {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 25%;
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        .prev-zone {
+            left: 0;
+        }
+
+        .next-zone {
+            right: 0;
+        }
+
+        /* --- Thumbnail Section --- */
+        .thumb-swiper {
+            width: 100%;
+            height: 18vh;
+            min-height: 120px;
+            max-height: 160px;
+            background-color: #333;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            padding: 0 40px;
+        }
+
+        .thumb-swiper .swiper-wrapper {
+            padding: 15px 0;
+            box-sizing: border-box;
+        }
+
+        .thumb-swiper .swiper-slide {
+            opacity: 0.4;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .thumb-swiper .swiper-slide-thumb-active {
+            opacity: 1;
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .thumb-swiper .swiper-slide-thumb-active .thumb-image {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border-radius: 2px;
+        }
+
+        .thumb-image {
+            height: calc(100% - 24px);
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .thumb-label {
+            color: #bbb;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        /* --- UI Elements --- */
+        .page-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 18px;
+            border-radius: 9999px;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header">
+        <h1 id="header-title"></h1>
+        <p id="header-subtitle"></p>
+    </header>
+
+    <div class="main-viewer" id="main-viewer">
+        <div class="nav-hotspot prev-zone"></div>
+        <div class="nav-hotspot next-zone"></div>
+        <div class="page-indicator" id="page-indicator"></div>
+    </div>
+
+    <div class="swiper thumb-swiper">
+        <div class="swiper-wrapper" id="thumb-wrapper"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+        /**
+         * --- CONFIGURATION ---
+         */
+        const CONFIG = {
+            country: "V4 Solo",
+            year: "2024",
+            dates: "10-May to 15-Jun, 2024",
+            totalImages: 62,
+            imagePrefix: "V4-Page-",
+            thumbnailFolder: "thumbnails/"
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Apply Header & Title Variables
+            document.title = `${CONFIG.country} ${CONFIG.year}`;
+            document.getElementById('header-title').textContent = `${CONFIG.country} ${CONFIG.year}`;
+            document.getElementById('header-subtitle').textContent = CONFIG.dates;
+
+            const mainViewer = document.getElementById('main-viewer');
+            const thumbWrapper = document.getElementById('thumb-wrapper');
+            const pageIndicator = document.getElementById('page-indicator');
+
+            const getPageLabel = (index) => {
+                if (index === 0) return "Cover";
+                return `Page ${index * 2 - 1}-${index * 2}`;
+            };
+
+            // --- Build slides ---
+            const slides = [];
+            let currentIndex = 0;
+            let isAnimating = false;
+
+            for (let i = 0; i < CONFIG.totalImages; i++) {
+                const label = getPageLabel(i);
+                const fileName = `${CONFIG.imagePrefix}${i}.jpg`;
+
+                const pageSlide = document.createElement('div');
+                pageSlide.className = 'page-slide' + (i === 0 ? '' : ' hidden');
+                pageSlide.innerHTML = `<img src="${fileName}" alt="${label}" class="main-image" loading="lazy">`;
+                pageSlide.addEventListener('click', () => {
+                    document.body.classList.toggle('is-fullscreen');
+                });
+                mainViewer.insertBefore(pageSlide, document.querySelector('.nav-hotspot'));
+                slides.push(pageSlide);
+
+                const thumbSlide = document.createElement('div');
+                thumbSlide.className = 'swiper-slide';
+                thumbSlide.innerHTML = `
+                    <img src="${CONFIG.thumbnailFolder}${fileName}" alt="Thumbnail for ${label}" class="thumb-image" loading="lazy">
+                    <div class="thumb-label">${label}</div>
+                `;
+                thumbWrapper.appendChild(thumbSlide);
+            }
+
+            pageIndicator.textContent = getPageLabel(0);
+
+            // --- Page flip logic ---
+            function flipTo(newIndex, direction) {
+                if (isAnimating || newIndex < 0 || newIndex >= slides.length || newIndex === currentIndex) return;
+                isAnimating = true;
+
+                const oldSlide = slides[currentIndex];
+                const newSlide = slides[newIndex];
+
+                // Phase 1: fold old page
+                const foldClass = direction === 'next' ? 'flip-left-in' : 'flip-right-in';
+                const unfoldClass = direction === 'next' ? 'flip-right-out' : 'flip-left-out';
+
+                // Show new slide beneath, clipped to the hidden half
+                newSlide.classList.remove('hidden');
+                newSlide.classList.add('beneath');
+                if (direction === 'next') {
+                    newSlide.style.clipPath = 'inset(0 0 0 50%)';
+                } else {
+                    newSlide.style.clipPath = 'inset(0 50% 0 0)';
+                }
+
+                // Fold the old page
+                oldSlide.classList.add(foldClass);
+
+                oldSlide.addEventListener('animationend', function onFold() {
+                    oldSlide.removeEventListener('animationend', onFold);
+                    oldSlide.classList.add('hidden');
+                    oldSlide.classList.remove(foldClass);
+                    oldSlide.style.clipPath = '';
+
+                    // Phase 2: unfold new page
+                    newSlide.classList.remove('beneath');
+                    newSlide.classList.add(unfoldClass);
+
+                    newSlide.addEventListener('animationend', function onUnfold() {
+                        newSlide.removeEventListener('animationend', onUnfold);
+                        newSlide.classList.remove(unfoldClass);
+                        newSlide.style.clipPath = '';
+                        currentIndex = newIndex;
+                        isAnimating = false;
+                        pageIndicator.textContent = getPageLabel(currentIndex);
+                        syncThumbs();
+                    });
+                });
+            }
+
+            function goNext() { flipTo(currentIndex + 1, 'next'); }
+            function goPrev() { flipTo(currentIndex - 1, 'prev'); }
+            function goTo(index) {
+                if (index === currentIndex || isAnimating) return;
+                flipTo(index, index > currentIndex ? 'next' : 'prev');
+            }
+
+            // --- Thumbnail Swiper ---
+            const thumbSwiper = new Swiper('.thumb-swiper', {
+                spaceBetween: 15,
+                slidesPerView: 6,
+                centeredSlides: false,
+                watchSlidesProgress: true,
+                breakpoints: {
+                    320: { slidesPerView: 3 },
+                    640: { slidesPerView: 4 },
+                    1024: { slidesPerView: 6 }
+                }
+            });
+
+            const thumbSlides = document.querySelectorAll('.thumb-swiper .swiper-slide');
+            if (thumbSlides[0]) thumbSlides[0].classList.add('swiper-slide-thumb-active');
+
+            function syncThumbs() {
+                thumbSlides.forEach(s => s.classList.remove('swiper-slide-thumb-active'));
+                if (thumbSlides[currentIndex]) {
+                    thumbSlides[currentIndex].classList.add('swiper-slide-thumb-active');
+                }
+                const visibleCount = Math.floor(thumbSwiper.params.slidesPerView);
+                const currentLeft = thumbSwiper.activeIndex;
+                const currentRight = currentLeft + visibleCount - 1;
+                if (currentIndex > currentRight) {
+                    thumbSwiper.slideTo(currentIndex - visibleCount + 1);
+                } else if (currentIndex < currentLeft) {
+                    thumbSwiper.slideTo(currentIndex);
+                }
+            }
+
+            thumbSwiper.on('click', () => {
+                if (thumbSwiper.clickedIndex !== undefined) {
+                    goTo(thumbSwiper.clickedIndex);
+                }
+            });
+
+            // --- Navigation ---
+            document.querySelector('.prev-zone').addEventListener('click', (e) => {
+                e.stopPropagation();
+                goPrev();
+            });
+            document.querySelector('.next-zone').addEventListener('click', (e) => {
+                e.stopPropagation();
+                goNext();
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goNext();
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goPrev();
+            });
+        });
+    </script>
+</body>
+
+</html>
