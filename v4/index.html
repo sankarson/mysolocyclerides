@@ -21,6 +21,7 @@
             padding: 0;
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             background-color: #333;
             overflow: hidden;
             display: flex;
@@ -35,8 +36,9 @@
             display: none;
         }
 
-        body.is-fullscreen .main-swiper {
+        body.is-fullscreen .main-viewer {
             height: 100vh;
+            height: 100dvh;
         }
 
         /* --- Header Section --- */
@@ -84,33 +86,24 @@
             }
         }
 
-        /* --- Main Viewer --- */
+        /* --- Main Viewer (Swiper) --- */
         .main-viewer {
             width: 100%;
             flex-grow: 1;
             min-height: 0;
             background-color: #333;
             position: relative;
-            overflow: hidden;
         }
 
-        .main-viewer .page-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        .main-viewer .swiper-slide {
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: zoom-in;
+            background-color: #333;
         }
 
-        .main-viewer .page-slide.hidden {
-            display: none;
-        }
-
-        body.is-fullscreen .main-viewer .page-slide {
+        body.is-fullscreen .main-viewer .swiper-slide {
             cursor: zoom-out;
         }
 
@@ -120,78 +113,13 @@
             object-fit: contain;
         }
 
-        /* Page flip animation */
-        @keyframes flipRightIn {
-            0% {
-                clip-path: inset(0 0 0 0);
-            }
-
-            100% {
-                clip-path: inset(0 0 0 50%);
-            }
-        }
-
-        @keyframes flipRightOut {
-            0% {
-                clip-path: inset(0 0 0 50%);
-            }
-
-            100% {
-                clip-path: inset(0 0 0 0);
-            }
-        }
-
-        @keyframes flipLeftIn {
-            0% {
-                clip-path: inset(0 0 0 0);
-            }
-
-            100% {
-                clip-path: inset(0 50% 0 0);
-            }
-        }
-
-        @keyframes flipLeftOut {
-            0% {
-                clip-path: inset(0 50% 0 0);
-            }
-
-            100% {
-                clip-path: inset(0 0 0 0);
-            }
-        }
-
-        .page-slide.flip-right-in {
-            animation: flipRightIn 0.3s ease-in forwards;
-            z-index: 3;
-        }
-
-        .page-slide.flip-right-out {
-            animation: flipRightOut 0.3s ease-out forwards;
-            z-index: 3;
-        }
-
-        .page-slide.flip-left-in {
-            animation: flipLeftIn 0.3s ease-in forwards;
-            z-index: 3;
-        }
-
-        .page-slide.flip-left-out {
-            animation: flipLeftOut 0.3s ease-out forwards;
-            z-index: 3;
-        }
-
-        .page-slide.beneath {
-            z-index: 2;
-        }
-
         /* --- Invisible Navigation Hotspots --- */
         .nav-hotspot {
             position: absolute;
             top: 0;
             height: 100%;
-            width: 25%;
-            z-index: 5;
+            width: 20%;
+            z-index: 10;
             cursor: pointer;
         }
 
@@ -213,6 +141,7 @@
             flex-shrink: 0;
             box-sizing: border-box;
             padding: 0 40px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
         }
 
         .thumb-swiper .swiper-wrapper {
@@ -280,7 +209,8 @@
         <p id="header-subtitle"></p>
     </header>
 
-    <div class="main-viewer" id="main-viewer">
+    <div class="swiper main-viewer" id="main-viewer">
+        <div class="swiper-wrapper" id="main-wrapper"></div>
         <div class="nav-hotspot prev-zone"></div>
         <div class="nav-hotspot next-zone"></div>
         <div class="page-indicator" id="page-indicator"></div>
@@ -311,7 +241,7 @@
             document.getElementById('header-title').textContent = `${CONFIG.country} ${CONFIG.year}`;
             document.getElementById('header-subtitle').textContent = CONFIG.dates;
 
-            const mainViewer = document.getElementById('main-viewer');
+            const mainWrapper = document.getElementById('main-wrapper');
             const thumbWrapper = document.getElementById('thumb-wrapper');
             const pageIndicator = document.getElementById('page-indicator');
 
@@ -321,23 +251,23 @@
             };
 
             // --- Build slides ---
-            const slides = [];
-            let currentIndex = 0;
-            let isAnimating = false;
-
             for (let i = 0; i < CONFIG.totalImages; i++) {
                 const label = getPageLabel(i);
                 const fileName = `${CONFIG.imagePrefix}${i}.jpg`;
 
-                const pageSlide = document.createElement('div');
-                pageSlide.className = 'page-slide' + (i === 0 ? '' : ' hidden');
-                pageSlide.innerHTML = `<img src="${fileName}" alt="${label}" class="main-image" loading="lazy">`;
-                pageSlide.addEventListener('click', () => {
-                    document.body.classList.toggle('is-fullscreen');
+                // Main Slide
+                const mainSlide = document.createElement('div');
+                mainSlide.className = 'swiper-slide';
+                mainSlide.innerHTML = `<img src="${fileName}" alt="${label}" class="main-image" loading="lazy">`;
+                mainSlide.addEventListener('click', (e) => {
+                    // Only toggle if not clicking hotspots
+                    if (!e.target.classList.contains('nav-hotspot')) {
+                        document.body.classList.toggle('is-fullscreen');
+                    }
                 });
-                mainViewer.insertBefore(pageSlide, document.querySelector('.nav-hotspot'));
-                slides.push(pageSlide);
+                mainWrapper.appendChild(mainSlide);
 
+                // Thumb Slide
                 const thumbSlide = document.createElement('div');
                 thumbSlide.className = 'swiper-slide';
                 thumbSlide.innerHTML = `
@@ -349,64 +279,10 @@
 
             pageIndicator.textContent = getPageLabel(0);
 
-            // --- Page flip logic ---
-            function flipTo(newIndex, direction) {
-                if (isAnimating || newIndex < 0 || newIndex >= slides.length || newIndex === currentIndex) return;
-                isAnimating = true;
-
-                const oldSlide = slides[currentIndex];
-                const newSlide = slides[newIndex];
-
-                // Phase 1: fold old page
-                const foldClass = direction === 'next' ? 'flip-left-in' : 'flip-right-in';
-                const unfoldClass = direction === 'next' ? 'flip-right-out' : 'flip-left-out';
-
-                // Show new slide beneath, clipped to the hidden half
-                newSlide.classList.remove('hidden');
-                newSlide.classList.add('beneath');
-                if (direction === 'next') {
-                    newSlide.style.clipPath = 'inset(0 0 0 50%)';
-                } else {
-                    newSlide.style.clipPath = 'inset(0 50% 0 0)';
-                }
-
-                // Fold the old page
-                oldSlide.classList.add(foldClass);
-
-                oldSlide.addEventListener('animationend', function onFold() {
-                    oldSlide.removeEventListener('animationend', onFold);
-                    oldSlide.classList.add('hidden');
-                    oldSlide.classList.remove(foldClass);
-                    oldSlide.style.clipPath = '';
-
-                    // Phase 2: unfold new page
-                    newSlide.classList.remove('beneath');
-                    newSlide.classList.add(unfoldClass);
-
-                    newSlide.addEventListener('animationend', function onUnfold() {
-                        newSlide.removeEventListener('animationend', onUnfold);
-                        newSlide.classList.remove(unfoldClass);
-                        newSlide.style.clipPath = '';
-                        currentIndex = newIndex;
-                        isAnimating = false;
-                        pageIndicator.textContent = getPageLabel(currentIndex);
-                        syncThumbs();
-                    });
-                });
-            }
-
-            function goNext() { flipTo(currentIndex + 1, 'next'); }
-            function goPrev() { flipTo(currentIndex - 1, 'prev'); }
-            function goTo(index) {
-                if (index === currentIndex || isAnimating) return;
-                flipTo(index, index > currentIndex ? 'next' : 'prev');
-            }
-
-            // --- Thumbnail Swiper ---
+            // --- Initialize Swipers ---
             const thumbSwiper = new Swiper('.thumb-swiper', {
                 spaceBetween: 15,
                 slidesPerView: 6,
-                centeredSlides: false,
                 watchSlidesProgress: true,
                 breakpoints: {
                     320: { slidesPerView: 3 },
@@ -415,44 +291,31 @@
                 }
             });
 
-            const thumbSlides = document.querySelectorAll('.thumb-swiper .swiper-slide');
-            if (thumbSlides[0]) thumbSlides[0].classList.add('swiper-slide-thumb-active');
-
-            function syncThumbs() {
-                thumbSlides.forEach(s => s.classList.remove('swiper-slide-thumb-active'));
-                if (thumbSlides[currentIndex]) {
-                    thumbSlides[currentIndex].classList.add('swiper-slide-thumb-active');
-                }
-                const visibleCount = Math.floor(thumbSwiper.params.slidesPerView);
-                const currentLeft = thumbSwiper.activeIndex;
-                const currentRight = currentLeft + visibleCount - 1;
-                if (currentIndex > currentRight) {
-                    thumbSwiper.slideTo(currentIndex - visibleCount + 1);
-                } else if (currentIndex < currentLeft) {
-                    thumbSwiper.slideTo(currentIndex);
-                }
-            }
-
-            thumbSwiper.on('click', () => {
-                if (thumbSwiper.clickedIndex !== undefined) {
-                    goTo(thumbSwiper.clickedIndex);
+            const mainSwiper = new Swiper('.main-viewer', {
+                spaceBetween: 0,
+                speed: 400,
+                grabCursor: true,
+                keyboard: {
+                    enabled: true,
+                },
+                thumbs: {
+                    swiper: thumbSwiper,
+                },
+                on: {
+                    slideChange: function () {
+                        pageIndicator.textContent = getPageLabel(this.activeIndex);
+                    }
                 }
             });
 
             // --- Navigation ---
             document.querySelector('.prev-zone').addEventListener('click', (e) => {
                 e.stopPropagation();
-                goPrev();
+                mainSwiper.slidePrev();
             });
             document.querySelector('.next-zone').addEventListener('click', (e) => {
                 e.stopPropagation();
-                goNext();
-            });
-
-            // Keyboard navigation
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goNext();
-                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goPrev();
+                mainSwiper.slideNext();
             });
         });
     </script>
