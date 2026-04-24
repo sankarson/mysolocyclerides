@@ -60,6 +60,7 @@
             font-variation-settings: 'wdth' 75;
             font-size: 2.8rem;
             font-weight: 800;
+            letter-spacing: -1.5px;
             /*    text-transform: uppercase;*/
         }
 
@@ -70,7 +71,7 @@
             font-size: 1rem;
             font-weight: 300;
             color: #ccc;
-            letter-spacing: 1px;
+            letter-spacing: 0.2px;
         }
 
         @media (max-width: 600px) {
@@ -121,38 +122,65 @@
 
         /* Page flip animation */
         @keyframes flipRightIn {
-            0%   { clip-path: inset(0 0 0 0); }
-            100% { clip-path: inset(0 0 0 50%); }
+            0% {
+                clip-path: inset(0 0 0 0);
+            }
+
+            100% {
+                clip-path: inset(0 0 0 50%);
+            }
         }
+
         @keyframes flipRightOut {
-            0%   { clip-path: inset(0 0 0 50%); }
-            100% { clip-path: inset(0 0 0 0); }
+            0% {
+                clip-path: inset(0 0 0 50%);
+            }
+
+            100% {
+                clip-path: inset(0 0 0 0);
+            }
         }
+
         @keyframes flipLeftIn {
-            0%   { clip-path: inset(0 0 0 0); }
-            100% { clip-path: inset(0 50% 0 0); }
+            0% {
+                clip-path: inset(0 0 0 0);
+            }
+
+            100% {
+                clip-path: inset(0 50% 0 0);
+            }
         }
+
         @keyframes flipLeftOut {
-            0%   { clip-path: inset(0 50% 0 0); }
-            100% { clip-path: inset(0 0 0 0); }
+            0% {
+                clip-path: inset(0 50% 0 0);
+            }
+
+            100% {
+                clip-path: inset(0 0 0 0);
+            }
         }
 
         .page-slide.flip-right-in {
             animation: flipRightIn 0.3s ease-in forwards;
             z-index: 3;
         }
+
         .page-slide.flip-right-out {
             animation: flipRightOut 0.3s ease-out forwards;
             z-index: 3;
         }
+
         .page-slide.flip-left-in {
             animation: flipLeftIn 0.3s ease-in forwards;
             z-index: 3;
         }
+
         .page-slide.flip-left-out {
             animation: flipLeftOut 0.3s ease-out forwards;
             z-index: 3;
         }
+
         .page-slide.beneath {
             z-index: 2;
         }
