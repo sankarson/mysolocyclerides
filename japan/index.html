@@ -79,14 +79,17 @@
                 // Main Slide
                 const mainSlide = document.createElement('div');
                 mainSlide.className = 'swiper-slide';
-                mainSlide.innerHTML = `<img src="${fileName}" alt="${label}" class="main-image" loading="lazy">`;
+                mainSlide.innerHTML = `
+                    <div class="swiper-zoom-container">
+                        <img src="${fileName}" alt="${label}" class="main-image" loading="lazy">
+                    </div>`;
                 mainWrapper.appendChild(mainSlide);
 
                 // Thumb Slide
                 const thumbSlide = document.createElement('div');
                 thumbSlide.className = 'swiper-slide';
                 thumbSlide.innerHTML = `
-                    <img src="${CONFIG.thumbnailFolder}${fileName}" alt="Thumbnail for ${label}" class="thumb-image" loading="lazy">
+                    <img src="${CONFIG.thumbnailFolder}${CONFIG.imagePrefix}${String(i).padStart(3, '0')}.webp" alt="${label}" class="thumb-image" loading="lazy">
                     <div class="thumb-label">${label}</div>
                 `;
                 thumbWrapper.appendChild(thumbSlide);
@@ -96,8 +99,9 @@
 
             // --- Initialize Swipers ---
             const thumbSwiper = new Swiper('.thumb-swiper', {
-                spaceBetween: 15,
+                spaceBetween: 10,
                 slidesPerView: 6,
+                freeMode: true,
                 watchSlidesProgress: true,
                 breakpoints: {
                     320: { slidesPerView: 3 },
@@ -110,6 +114,7 @@
                 spaceBetween: 0,
                 speed: 400,
                 grabCursor: true,
+                zoom: true,
                 keyboard: {
                     enabled: true,
                 },
