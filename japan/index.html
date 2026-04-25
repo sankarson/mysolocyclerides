@@ -89,7 +89,7 @@
                 const thumbSlide = document.createElement('div');
                 thumbSlide.className = 'swiper-slide';
                 thumbSlide.innerHTML = `
-                    <img src="${CONFIG.thumbnailFolder}${CONFIG.imagePrefix}${String(i).padStart(3, '0')}.webp" alt="${label}" class="thumb-image" loading="lazy">
+                    <img src="${CONFIG.thumbnailFolder}${fileName}" alt="${label}" class="thumb-image" loading="lazy">
                     <div class="thumb-label">${label}</div>
                 `;
                 thumbWrapper.appendChild(thumbSlide);
