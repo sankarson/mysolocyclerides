@@ -132,6 +132,15 @@
                 e.stopPropagation();
                 mainSwiper.slideNext();
             });
+
+            // --- Fullscreen Toggle ---
+            document.getElementById('main-viewer').addEventListener('click', () => {
+                document.body.classList.toggle('is-fullscreen');
+                // Force Swiper to recalculate dimensions after layout change
+                setTimeout(() => {
+                    mainSwiper.update();
+                }, 100);
+            });
         });
     </script>
     <!-- Google tag (gtag.js) -->

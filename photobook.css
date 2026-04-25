@@ -1,3 +1,30 @@
+/* --- Fullscreen Logic --- */
+body.is-fullscreen {
+    background-color: #000;
+}
+
+body.is-fullscreen header,
+body.is-fullscreen .thumb-swiper,
+body.is-fullscreen .page-indicator,
+body.is-fullscreen .nav-hotspot {
+    display: none !important;
+}
+
+body.is-fullscreen .app-content {
+    padding: 0;
+    gap: 0;
+    justify-content: center;
+}
+
+body.is-fullscreen .main-viewer {
+    height: 100dvh;
+    background-color: #000;
+}
+
+body.is-fullscreen .main-image {
+    object-fit: contain; /* Ensure full image visibility in fullscreen */
+}
+
 body,
 html {
     margin: 0;
