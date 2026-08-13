@@ -60,13 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const mainSwiper = new Swiper('.main-viewer', {
-        effect: 'flip',
-        flipEffect: {
-            slideShadows: true,
-            limitRotation: true,
-        },
         spaceBetween: 0,
-        speed: 700,
+        speed: 400,
         grabCursor: true,
         zoom: true,
         keyboard: {
