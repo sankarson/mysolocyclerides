@@ -1,3 +1,10 @@
+:root {
+    --color-instagram: #E1306C;
+    --color-strava: #FC6100;
+    --color-komoot: #76da24;
+    --color-youtube: #FF0000;
+}
+
 body {
     font-family: 'Open Sans', sans-serif;
     font-variation-settings: "wdth" 87.5;
@@ -72,21 +79,21 @@ body {
 }
 
 .social-links a:hover {
-    background: #E1306C;
+    background: var(--color-instagram);
     color: #fff;
     transform: translateY(-3px);
 }
 
 .social-links a.strava:hover {
-    background: #FC6100;
+    background: var(--color-strava);
 }
 
 .social-links a.komoot:hover {
-    background: #76da24;
+    background: var(--color-komoot);
 }
 
 .social-links a.youtube:hover {
-    background: #FF0000;
+    background: var(--color-youtube);
 }
 
 p {
@@ -95,7 +102,7 @@ p {
 }
 
 p a {
-    color: #E1306C;
+    color: var(--color-instagram);
     text-decoration: none;
     font-weight: 700;
 }
