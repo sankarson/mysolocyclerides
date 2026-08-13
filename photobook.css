@@ -126,6 +126,7 @@ header p {
 /* --- Main Viewer (Swiper) --- */
 .main-viewer {
     width: 100%;
+    /* Leaves room in the 100dvh column for the header and the 16vh thumb strip below */
     height: 62vh;
     flex-shrink: 0;
     background-color: #333;
@@ -143,6 +144,20 @@ header p {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+/* --- Missing Image Fallback --- */
+.swiper-slide.image-missing .main-image,
+.swiper-slide.image-missing .thumb-image {
+    visibility: hidden;
+}
+
+.swiper-slide.image-missing::before {
+    content: "Image unavailable";
+    position: absolute;
+    color: #999;
+    font-size: 13px;
+    text-align: center;
 }
 
 /* --- Invisible Navigation Hotspots --- */
