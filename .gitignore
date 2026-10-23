@@ -1,2 +1,9 @@
 /.DS_Store
 .wrangler/
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+.swiftpm/
