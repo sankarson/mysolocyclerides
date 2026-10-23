@@ -13,7 +13,6 @@ Digital photobooks from solo bicycle adventures — live at https://cycling.sank
 
 ## Deploying the website
 
-Cloudflare Pages: no build command, build output directory `web`.
-Set build watch paths to `web/*` so app-only commits don't redeploy the site.
+Cloudflare (Workers static assets, see `wrangler.jsonc`): `.github/workflows/cloudflare.yml` deploys `web/` on every push to `main`.
 
 Photos are not bundled in the apps; they load from the website's WebP pages.
