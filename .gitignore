@@ -1,2 +1,7 @@
 /.DS_Store
 .wrangler/
+
+ios/**/xcuserdata/
+ios/**/build/
+DerivedData/
+ios/**/build-device/
