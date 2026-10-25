@@ -17,7 +17,7 @@
 				<key>bundle-identifier</key><string>in.sankarson.mysolocyclerides</string>
 				<key>bundle-version</key><string>1.0</string>
 				<key>kind</key><string>software</string>
-				<key>title</key><string>Solo Cycle Rides</string>
+				<key>title</key><string>My Solo Cycle Rides</string>
 			</dict>
 		</dict>
 	</array>

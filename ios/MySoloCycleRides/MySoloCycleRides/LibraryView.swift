@@ -34,7 +34,7 @@ struct LibraryView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Solo Cycle Rides")
+            .navigationTitle("My Solo Cycle Rides")
             .navigationDestination(for: Book.self) { PhotobookView(book: $0) }
         }
     }
