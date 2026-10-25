@@ -1,7 +1,10 @@
 /.DS_Store
 .wrangler/
 
-ios/**/xcuserdata/
-ios/**/build/
+# Xcode
+xcuserdata/
+*.xcuserstate
 DerivedData/
-ios/**/build-device/
+build/
+.swiftpm/
+build-device/

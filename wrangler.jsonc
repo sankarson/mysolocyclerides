@@ -1,7 +1,7 @@
 {
   "name": "mysolocyclerides",
   "compatibility_date": "2026-09-26",
-  "assets": { "directory": "." },
+  "assets": { "directory": "./web" },
   "workers_dev": true,
   "preview_urls": true,
   "routes": [{ "pattern": "cycling.sankarson.in", "custom_domain": true }]
