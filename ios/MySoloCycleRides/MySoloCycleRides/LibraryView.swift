@@ -53,9 +53,6 @@ private struct BookCard: View {
                 }
             }
             .frame(maxWidth: .infinity, minHeight: 160)
-            .background(.quaternary, in: RoundedRectangle(cornerRadius: 8))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .shadow(radius: 3, y: 2)
 
             Text(book.title).font(.headline)
         }
