@@ -242,6 +242,10 @@ p a:hover {
         order: 2;
     }
 
+    .kit {
+        order: 4;
+    }
+
     .image-column img {
         max-width: 250px;
         margin-top: 40px;
