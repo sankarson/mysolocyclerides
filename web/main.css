@@ -170,8 +170,8 @@ p a:hover {
 }
 
 .kit-lead {
-    max-width: 640px;
     margin-top: 0;
+    text-wrap: pretty;
 }
 
 .kit-strip {
